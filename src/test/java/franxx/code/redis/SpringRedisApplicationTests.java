@@ -1,4 +1,4 @@
-package franxx.code.spring_redis;
+package franxx.code.redis;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
