@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.ListOperations;
+import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
@@ -42,5 +43,22 @@ class RedisTest {
     assertThat(ops.leftPop("names")).isEqualTo("Hilmi");
     assertThat(ops.leftPop("names")).isEqualTo("Akbar");
     assertThat(ops.leftPop("names")).isEqualTo("Muharrom");
+  }
+
+  @Test
+  void set() {
+    SetOperations<String, String> ops = redisTemplate.opsForSet();
+    ops.add("names", "Hilmi");
+    ops.add("names", "Hilmi");
+    ops.add("names", "Akbar");
+    ops.add("names", "Akbar");
+    ops.add("names", "Muharrom");
+    ops.add("names", "Muharrom");
+    ops.add("names", "Muharrom");
+
+    assertThat(ops.members("names")).hasSize(3);
+    assertThat(ops.members("names")).containsOnly("Hilmi", "Akbar", "Muharrom");
+
+    redisTemplate.delete("names");
   }
 }
