@@ -7,6 +7,7 @@ import java.time.Duration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
@@ -31,5 +32,15 @@ class RedisTest {
        assertThat(opsForValue.get("name")).isNull();
     }
 
+  @Test
+  void list() {
+    ListOperations<String, String> ops = redisTemplate.opsForList();
+    ops.rightPush("names", "Hilmi");
+    ops.rightPush("names", "Akbar");
+    ops.rightPush("names", "Muharrom");
 
+    assertThat(ops.leftPop("names")).isEqualTo("Hilmi");
+    assertThat(ops.leftPop("names")).isEqualTo("Akbar");
+    assertThat(ops.leftPop("names")).isEqualTo("Muharrom");
+  }
 }
