@@ -3,14 +3,12 @@ package franxx.code.redis;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.Duration;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.SetOperations;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.core.*;
 
 @SpringBootTest
 class RedisTest {
@@ -60,5 +58,20 @@ class RedisTest {
     assertThat(ops.members("names")).containsOnly("Hilmi", "Akbar", "Muharrom");
 
     redisTemplate.delete("names");
+  }
+
+  @Test
+  void zSet() {
+    ZSetOperations<String, String> zSet = redisTemplate.opsForZSet();
+    zSet.add("ranking", "Hilmi", 200);
+    zSet.add("ranking", "Malik", 100);
+    zSet.add("ranking", "Dicky", 50);
+
+    Set<String> ranking = zSet.range("ranking", 0, -1);
+    assertThat(ranking).hasSize(3);
+    assertThat(ranking).containsExactly("Dicky", "Malik", "Hilmi");
+
+    assertThat(zSet.popMax("ranking").getValue()).isEqualTo("Hilmi");
+
   }
 }
